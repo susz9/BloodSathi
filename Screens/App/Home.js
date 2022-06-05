@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Text, ScrollView } from 'react-native';
+import { Text, TouchableOpacity, ScrollView } from 'react-native';
 //status bar
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -55,22 +55,17 @@ const Home = ({ navigation }) => {
         <StatusBar style="dark" />
         <Greet>{`Hi, \nGood Afternoon!`}</Greet>
         <InnerContainer>
-          <UserCardContainer style={{ top: 10, elevation: 3 }}>
-            <Profile
-              onPress={() => {
-                navigation.navigate('MyProfile');
-              }}
-            >
-              <UserIcon style={{ left: 20, top: 14 }} resizeMode="cover" source={avatar} />
-            </Profile>
-            <Profile
-              onPress={() => {
-                navigation.navigate('MyProfile');
-              }}
-            >
-              <Name style={{ left: -15, top: 20 }}>{name}</Name>
-            </Profile>
-            <Ionicons style={{ left: 26, top: 20 }} name="checkmark-circle-outline" size={35} color={green} />
+          <UserCardContainer
+            onPress={() => {
+              navigation.navigate('MyProfile');
+            }}
+            style={{ top: 10, elevation: 3 }}
+          >
+            <UserIcon style={{ left: 20, top: 14 }} resizeMode="cover" source={avatar} />
+
+            <Name style={{ left: -15, top: 20 }}>{name}</Name>
+
+            <Ionicons style={{ left: 26, top: 20 }} name="checkmark-circle" size={35} color={green} />
           </UserCardContainer>
 
           <FeedContainer style={{ top: 22 }}>

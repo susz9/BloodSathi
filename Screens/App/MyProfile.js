@@ -10,7 +10,6 @@ import {
   Avatar,
   MsgBox,
   Name,
-  Address,
   StyledFormArea,
   InnerContainer,
   FeedContainer,
@@ -92,7 +91,7 @@ const MyProfile = () => {
           </StyledRow>
           <StyledRow>
             <Ionicons style={{ left: 4, top: -2 }} name="location" size={26} color={brand} />
-            <Address style={{ left: 10, fontSize: 20, fontFamily: 'Regular' }}>{response[0].address}</Address>
+            <Text style={{ left: 10, fontSize: 20, fontFamily: 'Regular' }}>{response[0].address}</Text>
           </StyledRow>
 
           <StyledFormArea style={{ top: -30 }}>

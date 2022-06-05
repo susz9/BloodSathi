@@ -102,7 +102,7 @@ const WithCreds = ({ navigation }) => {
         <StatusBar style="dark" />
         <InnerContainer>
           <Illustration resizeMode="cover" source={require('./../../assets/Illustrations/Login.png')} />
-          <PageTitle>Log in</PageTitle>
+          <PageTitle>Welcome back</PageTitle>
 
           <Formik
             initialValues={{ email: '', password: '' }}

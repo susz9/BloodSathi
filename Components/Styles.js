@@ -9,7 +9,7 @@ const StatusBarHeight = Constants.statusBarHeight;
 export const Colors = {
   primary: '#ffffff',
   secondary: '#000000',
-  tertiary: '#ffe3eb',
+  tertiary: '#FCEBF0',
   brand: '#F43A6B',
   darkLight: '#9ca3af',
   green: '#00db0f',
@@ -24,6 +24,7 @@ export const StyledContainer = styled.View`
   padding-top: ${StatusBarHeight}px;
   background-color: ${primary};
   height: 100%;
+  align-items: center;
   ${(props) =>
     props.home == true &&
     `
@@ -59,7 +60,7 @@ export const PageTitle = styled.Text`
 
 export const StyledFormArea = styled.View`
   margin-vertical: 24px;
-  width: 90%;
+  width: 100%;
 `;
 
 export const StyledTextInput = styled.TextInput`
@@ -72,7 +73,7 @@ export const StyledTextInput = styled.TextInput`
   margin-vertical: 2px;
   margin-bottom: 10px;
   color: ${secondary};
-  font-family: Light;
+  font-family: Regular;
 `;
 
 export const StyledPhone = styled.TextInput`
@@ -87,6 +88,8 @@ export const StyledPhone = styled.TextInput`
   margin-vertical: 4px;
   margin-bottom: 10px;
   color: ${secondary};
+  border: 0.5px;
+  border-color: ${brand};
 `;
 
 export const StyledOTP = styled.TextInput`
@@ -140,7 +143,6 @@ export const StyledButton = styled.TouchableOpacity`
   align-items: center;
   border-radius: 24px;
   height: 48px;
-  margin-vertical: 8px;
 
   ${(props) =>
     props.google == true &&
@@ -244,13 +246,10 @@ export const Greet = styled.Text`
 export const UserCardContainer = styled.TouchableOpacity`
   flex-direction: row;
   background-color: ${primary};
-  justify-content: space-between;
-  height: 80px;
   width: 360px;
   border-radius: 16px;
+  padding: 12px;
 `;
-
-export const Profile = styled.TouchableOpacity``;
 
 export const UserIcon = styled.Image`
   width: 50px;
@@ -262,7 +261,7 @@ export const UserIcon = styled.Image`
 
 export const Name = styled.Text`
   font-family: Medium;
-  font-size: 20px;
+  font-size: 16px;
 `;
 
 export const Verified = styled.Image`
@@ -289,4 +288,6 @@ export const MessageContainer = styled.View`
   width: 340px;
 `;
 
-export const ProfileContainer = styled.View``;
+export const ProfileContainer = styled.View`
+  padding: 4px 0 0 24px;
+`;

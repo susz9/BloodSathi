@@ -32,7 +32,7 @@ import {
   StyledPicker,
 } from './../../Components/Styles';
 
-import { View, TouchableOpacity, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ScrollView, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 //API client
@@ -213,7 +213,9 @@ const CompleteProfile = ({ navigation, route }) => {
         <InnerContainer>
           <Illustration resizeMode="cover" source={require('./../../assets/Illustrations/Profile.png')} />
           <PageTitle>Complete Profile</PageTitle>
-
+          <Text style={{ top: -12, fontSize: 14, fontFamily: 'Regular' }}>
+            Please enter your legit profile details.
+          </Text>
           {show && (
             <DateTimePicker
               testID="dateTimePicker"

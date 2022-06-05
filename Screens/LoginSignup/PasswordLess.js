@@ -155,8 +155,8 @@ const PasswordLess = ({ navigation }) => {
         <StatusBar style="dark" />
         <InnerContainer>
           <Illustration resizeMode="cover" source={require('./../../assets/Illustrations/Login.png')} />
-          <PageTitle>Login</PageTitle>
-
+          <PageTitle>Connect &amp; help people</PageTitle>
+          {/* <Text style={{ top: -16, fontSize: 14, fontFamily: 'Regular' }}>Please enter your phone number to login</Text> */}
           <Formik
             initialValues={{ phone: '' }}
             onSubmit={(values, { setSubmitting }) => {

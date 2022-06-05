@@ -6,7 +6,6 @@ import {
   ButtonText,
   StyledRequest,
   Line,
-  Profile,
   StyledFormArea,
   StyledContainer,
   UserCardContainer,
@@ -16,99 +15,18 @@ import {
   StyledRow,
   ProfileContainer,
 } from '../../Components/Styles';
-
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
-
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-
 //icons
 import { Ionicons } from '@expo/vector-icons';
-
 import { Colors } from '../../Components/Styles';
-
 //formik
 import { Formik } from 'formik';
-
 //colors
+//API client
+import axios from 'axios';
 const { primary, secondary, tertiary, brand, darkLight, green } = Colors;
-
-const districts = [
-  'achham',
-  'arghakhanchi',
-  'baglung',
-  'baitadi',
-  'bajhang',
-  'bajura',
-  'banke',
-  'bara',
-  'bardiya',
-  'bhaktapur',
-  'bhojpur',
-  'chitwan',
-  'dadeldhura',
-  'dailekh',
-  'dang deukhuri',
-  'darchula',
-  'dhading',
-  'dhankuta',
-  'dhanusa',
-  'dholkha',
-  'dolpa',
-  'doti',
-  'gorkha',
-  'gulmi',
-  'humla',
-  'ilam',
-  'jajarkot',
-  'jhapa',
-  'jumla',
-  'kailali',
-  'kalikot',
-  'kanchanpur',
-  'kapilvastu',
-  'kaski',
-  'kathmandu',
-  'kavrepalanchok',
-  'khotang',
-  'lalitpur',
-  'lamjung',
-  'mahottari',
-  'makwanpur',
-  'manang',
-  'morang',
-  'mugu',
-  'mustang',
-  'myagdi',
-  'nawalparasi',
-  'nuwakot',
-  'okhaldhunga',
-  'palpa',
-  'panchthar',
-  'parbat',
-  'parsa',
-  'pyuthan',
-  'ramechhap',
-  'rasuwa',
-  'rautahat',
-  'rolpa',
-  'rukum',
-  'rupandehi',
-  'salyan',
-  'sankhuwasabha',
-  'saptari',
-  'sarlahi',
-  'sindhuli',
-  'sindhupalchok',
-  'siraha',
-  'solukhumbu',
-  'sunsari',
-  'surkhet',
-  'syangja',
-  'tanahu',
-  'taplejung',
-  'terhathum',
-  'udayapur',
-];
+import { bloodGroupList, distanceList, districtList } from '../../Components/PickerData';
 
 const response = [
   {
@@ -134,9 +52,9 @@ const response = [
 ];
 
 const SearchResult = ({ navigation, route }) => {
-  const [selectedBloodGroup, setSelectedBloodGroup] = useState('Blood Group');
-  const [selectedDistance, setSelectedDistance] = useState('Gender');
-  const [selectedDistrict, setSelectedDistrict] = useState('District');
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState('A+');
+  const [selectedDistance, setSelectedDistance] = useState();
+  const [selectedDistrict, setSelectedDistrict] = useState();
 
   //console.log(route.params.Dresponse);
   const [data, setData] = useState(route.params.data);
@@ -148,32 +66,32 @@ const SearchResult = ({ navigation, route }) => {
         onPress={() => {
           navigation.navigate('MyProfile');
         }}
-        style={{ left: 8, elevation: 2, height: 110, marginVertical: 8 }}
+        style={{
+          left: 8,
+          marginVertical: 8,
+          elevation: 2,
+        }}
       >
         <UserIcon
-          style={{ left: 16, top: 16, height: 70, width: 70 }}
+          style={{ left: 7, top: 10, height: 70, width: 70 }}
           resizeMode="cover"
           source={{ uri: user.avatar } || require('../../assets/Illustrations/avatar.png')}
         />
 
         <ProfileContainer>
-          <Name style={{ left: 0, top: 10, fontSize: 16 }}>{user.fullName}</Name>
-          <Text style={{ left: 0, top: 5 }}>{user.address}</Text>
+          <Name>{user.fullName}</Name>
+          <Text>{user.address}</Text>
           <StyledRow style={{ left: 0 }}>
-            <Text style={{ top: 5 }}>
+            <Text>
               {response[1].age} Y/O {'\t'}
             </Text>
-            <Text style={{ top: 5 }}>{user.sex}</Text>
+            <Text>{user.sex}</Text>
           </StyledRow>
-          <Text style={{ left: 0, top: 5 }}>{response[1].distance} KM</Text>
+          <Text>{response[1].distance} KM</Text>
         </ProfileContainer>
-
-        <Ionicons
-          style={{ position: 'absolute', right: 15, top: 32 }}
-          name="chatbubble-ellipses-outline"
-          size={36}
-          color={brand}
-        />
+        <StyledButton style={{ position: 'absolute', right: 16, top: 38 }}>
+          <Ionicons name="chatbubble-ellipses-outline" size={34} color={brand} />
+        </StyledButton>
       </UserCardContainer>
     );
   });
@@ -182,132 +100,201 @@ const SearchResult = ({ navigation, route }) => {
   //   ? { uri: response[0].photoUrl }
   //   : require('./../../assets/Illustrations/avatar.png');
 
+  //donors by geo-location
+  const handleDistance = (credentials) => {
+    //localhost
+    const url = 'http://192.168.10.71:3000/user/donors';
+
+    // console.log('on search donors');
+    console.log(credentials);
+    // console.log('\n');
+
+    axios
+      .post(url, credentials)
+      .then((response) => {
+        const result = response.data;
+        const { status, message, data } = result;
+        console.log('axios response');
+        console.log(data);
+
+        if (status != 'SUCCESS') {
+          alert(message + ' Please try again.');
+        } else {
+          console.log('success');
+          //navigating to search-results and passing server response
+          //navigation.navigate('SearchResult', { data });
+          setData(data);
+        }
+      })
+      .catch((error) => {
+        console.log('\n error');
+        console.log(error);
+      });
+  };
+
+  //donors by district
+  const handleDistrict = (credentials) => {
+    console.log(credentials);
+
+    //localhost
+    const url = 'http://192.168.10.71:3000/user/donorsByDistrict';
+
+    axios
+      .post(url, credentials)
+      .then((response) => {
+        const result = response.data;
+        const { status, message, data } = result;
+        console.log('axios response');
+        console.log(data);
+
+        if (status != 'SUCCESS') {
+          alert(message + ' Please try again.');
+        } else {
+          console.log('success');
+          //navigating to search-results and passing server response
+          setData(data);
+        }
+      })
+      .catch((error) => {
+        alert('Please check your network and try again');
+        console.log('\n error');
+        console.log(error);
+      });
+  };
+
   return (
-    <>
-      <StyledContainer home={true}>
-        <Text style={{ top: 15, left: 0, fontSize: 20, fontFamily: 'Medium' }}>Available donors</Text>
-        <InnerContainer style={{ top: 0, left: 16 }}>
-          <Formik
-            initialValues={{
-              bloodGroup: '',
-              distance: '',
-              coordinates: null,
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              values = { ...values, coordinates: { longitude, latitude } };
-              if (values.selectedBloodGroup == '' || values.selectedDistance == '') {
-                handleMessage('Please select blood group and distance.');
-                setSubmitting(false);
-              } else {
-                //searchDonors(values, setSubmitting);
-                handleMessage(null);
-                navigation.navigate('SearchResult');
-                setSubmitting(false);
-              }
-            }}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
-              <StyledFormArea>
-                <StyledRow>
-                  <View
-                    style={{
-                      marginVertical: 0,
-                      marginHorizontal: 5,
-                      height: 40,
-                      backgroundColor: tertiary,
-                      borderRadius: 8,
-                      justifyContent: 'center',
-                      elevation: 3,
+    <StyledContainer home={true}>
+      <Text style={{ top: 15, left: 0, fontSize: 20, fontFamily: 'Medium' }}>Available donors</Text>
+      <InnerContainer style={{ top: 0, left: 0 }}>
+        <Formik
+          initialValues={{
+            bloodGroup: '',
+            distance: '',
+            district: '',
+            coordinates: null,
+          }}
+          onSubmit={(values, { setSubmitting }) => {
+            values = { ...values, coordinates: { longitude, latitude } };
+            if (values.selectedBloodGroup == '' || values.selectedDistance == '') {
+              handleMessage('Please select blood group and distance.');
+              setSubmitting(false);
+            } else {
+              //searchDonors(values, setSubmitting);
+              console.log('hi');
+            }
+          }}
+        >
+          {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
+            <StyledFormArea>
+              <StyledRow style={{}}>
+                <View
+                  style={{
+                    elevation: 1,
+                    marginVertical: 10,
+                    height: 40,
+                    backgroundColor: tertiary,
+                    borderRadius: 8,
+                    justifyContent: 'center',
+                    borderWidth: 0.5,
+                    borderColor: brand,
+                  }}
+                >
+                  {/* <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Blood Group</Text> */}
+                  <Picker
+                    selectedValue={selectedBloodGroup}
+                    style={{ height: 50, width: 160, marginLeft: 7 }}
+                    onValueChange={(itemValue) => {
+                      handleChange('bloodGroup')(String(itemValue));
+                      setSelectedBloodGroup(itemValue);
+                      console.log(itemValue);
                     }}
+                    value={values.bloodGroup}
                   >
-                    <Picker
-                      selectedValue={selectedBloodGroup}
-                      style={{ height: 50, width: 90 }}
-                      onValueChange={(itemValue) => {
-                        setSelectedBloodGroup(itemValue);
-                        console.log(itemValue);
-                      }}
-                      onBlur={handleBlur('bloodGroup')}
-                      value={values.bloodGroup}
-                    >
-                      <Picker.Item label="Blood Group" value="" />
-                      <Picker.Item label="A+" value="A+" />
-                      <Picker.Item label="A-" value="A-" />
-                      <Picker.Item label="B+" value="B+" />
-                      <Picker.Item label="B-" value="B-" />
-                      <Picker.Item label="O+" value="O+" />
-                      <Picker.Item label="O-" value="O-" />
-                      <Picker.Item label="AB+" value="AB+" />
-                      <Picker.Item label="AB-" value="AB-" />
-                    </Picker>
-                  </View>
+                    {bloodGroupList.map((item, index) => {
+                      return <Picker.Item key={index} label={item} value={item} />;
+                    })}
+                  </Picker>
+                </View>
 
-                  <View
-                    style={{
-                      marginVertical: 0,
-                      marginHorizontal: 5,
-                      height: 40,
-                      backgroundColor: tertiary,
-                      borderRadius: 8,
-                      justifyContent: 'center',
-                      elevation: 3,
+                <View
+                  style={{
+                    elevation: 1,
+                    marginVertical: 10,
+                    height: 40,
+                    backgroundColor: tertiary,
+                    borderRadius: 8,
+                    justifyContent: 'center',
+                    borderWidth: 0.5,
+                    borderColor: brand,
+                  }}
+                >
+                  {/* <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Distance</Text> */}
+                  <Picker
+                    selectedValue={selectedDistance}
+                    style={{ height: 50, width: 160, marginLeft: 7 }}
+                    onValueChange={(itemValue) => {
+                      handleChange('distance')(String(itemValue));
+                      setSelectedDistance(itemValue);
+                      handleDistance({
+                        bloodGroup: selectedBloodGroup,
+                        distance: itemValue.toString(),
+                        coordinates: {
+                          longitude: 87.3652256,
+                          latitude: 26.6653911,
+                        },
+                      });
+                      console.log(itemValue);
                     }}
+                    value={values.distance}
                   >
-                    <Picker
-                      selectedValue={selectedDistance}
-                      style={{ height: 50, width: 120 }}
-                      onValueChange={(itemValue, itemIndex) => {
-                        setSelectedDistance(itemValue);
-                        console.log(itemValue);
-                      }}
-                      value={values.distance}
-                    >
-                      <Picker.Item label="Distance (5 KM)" value="5" />
-                      <Picker.Item label="10 KM" value="10" />
-                      <Picker.Item label="25 KM" value="25" />
-                      <Picker.Item label="50 KM" value="50" />
-                      <Picker.Item label="100 KM" value="100" />
-                      <Picker.Item label="200 KM" value="200" />
-                    </Picker>
-                  </View>
-                  <View
-                    style={{
-                      marginVertical: 0,
-                      marginHorizontal: 5,
-                      height: 40,
-                      backgroundColor: tertiary,
-                      borderRadius: 8,
-                      justifyContent: 'center',
-                      elevation: 3,
-                    }}
-                  >
-                    <Picker
-                      selectedValue={selectedDistrict}
-                      style={{ width: 140, left: 0 }}
-                      onValueChange={(itemValue, itemIndex) => {
-                        setSelectedDistrict(itemValue);
-                        console.log(itemValue);
-                      }}
-                      onBlur={handleBlur('district')}
-                      value={values.distric}
-                    >
-                      <Picker.Item label="District" value={''} />
-                      {districts.map((district, index) => (
-                        <Picker.Item key={index} label={district.toUpperCase()} value={district.toUpperCase()} />
-                      ))}
-                    </Picker>
-                  </View>
-                </StyledRow>
+                    {distanceList.map((item) => {
+                      return <Picker.Item key={item.value} label={item.label} value={item.value} />;
+                    })}
+                  </Picker>
+                </View>
+              </StyledRow>
 
-                {/* test */}
-                <ScrollView style={{ margin: 0, top: 15, right: 50, width: 400 }}>{donors}</ScrollView>
-                {/* test */}
-              </StyledFormArea>
-            )}
-          </Formik>
-        </InnerContainer>
-      </StyledContainer>
-    </>
+              <View
+                style={{
+                  borderWidth: 0.5,
+                  borderColor: brand,
+                  marginVertical: 0,
+                  marginHorizontal: 5,
+                  height: 40,
+                  backgroundColor: tertiary,
+                  borderRadius: 8,
+                  justifyContent: 'center',
+                  elevation: 2,
+                }}
+              >
+                <Picker
+                  selectedValue={selectedDistrict}
+                  style={{ height: 50, marginLeft: 7 }}
+                  onValueChange={(itemValue) => {
+                    handleChange('district')(String(itemValue));
+                    setSelectedDistrict(itemValue);
+                    console.log(data);
+                    handleDistrict({
+                      bloodGroup: selectedBloodGroup,
+                      district: itemValue,
+                    });
+                    console.log(itemValue);
+                  }}
+                  value={values.district}
+                >
+                  {districtList.map((district, index) => (
+                    <Picker.Item key={index} label={district.toUpperCase()} value={district.toUpperCase()} />
+                  ))}
+                </Picker>
+              </View>
+            </StyledFormArea>
+          )}
+        </Formik>
+        {/* display donors list */}
+        <ScrollView style={{ width: 400 }}>{donors}</ScrollView>
+        {/* test */}
+      </InnerContainer>
+    </StyledContainer>
   );
 };
 

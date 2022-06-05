@@ -179,6 +179,8 @@ const Search = ({ navigation }) => {
                     backgroundColor: tertiary,
                     borderRadius: 8,
                     justifyContent: 'center',
+                    borderWidth: 0.5,
+                    borderColor: brand,
                   }}
                 >
                   <Picker
@@ -206,6 +208,8 @@ const Search = ({ navigation }) => {
                     backgroundColor: tertiary,
                     borderRadius: 8,
                     justifyContent: 'center',
+                    borderWidth: 0.5,
+                    borderColor: brand,
                   }}
                 >
                   <Picker
