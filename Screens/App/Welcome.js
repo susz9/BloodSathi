@@ -51,12 +51,12 @@ const Welcome = ({ navigation }) => {
             <PageTitle welcome={true}>
               Welcome!{'\n'} {name}
             </PageTitle>
-            <StyledButton style={{ width: 300 }} onPress={() => navigation.navigate('Main')}>
+            <StyledButton onPress={() => navigation.navigate('Main')}>
               <ButtonText>Go To Home</ButtonText>
             </StyledButton>
 
             <Line style={{ marginVertical: 20 }} />
-            <StyledButton style={{ width: 300 }} onPress={clearLogin}>
+            <StyledButton onPress={clearLogin}>
               <ButtonText>Logout</ButtonText>
             </StyledButton>
           </StyledFormArea>

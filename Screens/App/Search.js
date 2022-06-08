@@ -11,6 +11,8 @@ import {
   StyledInputLabel,
   StyledTextInput,
   PageTitle,
+  UserCardContainer,
+  StyledRow,
 } from '../../Components/Styles';
 
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
@@ -19,8 +21,6 @@ import { Picker } from '@react-native-picker/picker';
 
 //icons
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-
-import { Colors } from '../../Components/Styles';
 
 //formik
 import { Formik } from 'formik';
@@ -34,6 +34,7 @@ import axios from 'axios';
 import { bloodGroupList, distanceList } from '../../Components/PickerData';
 
 //colors
+import { Colors } from '../../Components/Styles';
 const { primary, secondary, tertiary, brand, darkLight } = Colors;
 
 const Search = ({ navigation }) => {
@@ -43,8 +44,8 @@ const Search = ({ navigation }) => {
   const [latitude, setLatitude] = useState('');
 
   const [message, setMessage] = useState();
-
   const [messageType, setMessageType] = useState();
+
   const [location, setLocation] = useState('');
 
   useEffect(async () => {
@@ -152,7 +153,7 @@ const Search = ({ navigation }) => {
   return (
     <>
       <StyledContainer>
-        <InnerContainer style={{ top: 60 }}>
+        <InnerContainer style={{ top: 0 }}>
           <Formik
             initialValues={{
               bloodGroup: 'A+',
@@ -168,85 +169,111 @@ const Search = ({ navigation }) => {
           >
             {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
               <StyledFormArea>
-                <Text style={{ top: -20, left: 0, fontSize: 18, fontFamily: 'Medium' }}>{location}</Text>
-
-                <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Blood Group</Text>
                 <View
                   style={{
-                    elevation: 1,
-                    marginVertical: 10,
-                    height: 40,
-                    backgroundColor: tertiary,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    borderWidth: 0.5,
-                    borderColor: brand,
+                    backgroundColor: primary,
+                    marginVertical: 12,
+                    padding: 12,
+                    elevation: 7,
+                    borderRadius: 12,
                   }}
                 >
-                  <Picker
-                    selectedValue={selectedBloodGroup}
-                    style={{ height: 50, marginLeft: 7 }}
-                    onValueChange={(itemValue) => {
-                      handleChange('bloodGroup')(String(itemValue));
-                      setSelectedBloodGroup(itemValue);
-                      console.log(itemValue);
-                    }}
-                    value={values.bloodGroup}
-                  >
-                    {bloodGroupList.map((item, index) => {
-                      return <Picker.Item key={index} label={item} value={item} />;
-                    })}
-                  </Picker>
+                  <Text style={{ fontSize: 15, fontFamily: 'Regular' }}>Your Location</Text>
+                  <StyledRow>
+                    <Ionicons style={{ paddingRight: 6 }} name="location" size={24} color={brand} />
+                    <Text style={{ fontSize: 18, fontFamily: 'Medium' }}>{location}</Text>
+                  </StyledRow>
                 </View>
 
-                <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Distance</Text>
                 <View
                   style={{
-                    elevation: 1,
-                    marginVertical: 10,
-                    height: 40,
-                    backgroundColor: tertiary,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    borderWidth: 0.5,
-                    borderColor: brand,
+                    backgroundColor: primary,
+                    marginVertical: 12,
+                    padding: 12,
+                    elevation: 7,
+                    borderRadius: 12,
+                    padding: 24,
                   }}
                 >
-                  <Picker
-                    selectedValue={selectedDistance}
-                    style={{ height: 50, marginLeft: 7 }}
-                    onValueChange={(itemValue) => {
-                      handleChange('distance')(String(itemValue));
-                      setSelectedDistance(itemValue);
-                      console.log(itemValue);
+                  <Text style={{ fontSize: 18, fontFamily: 'Medium' }}>Search Donors</Text>
+                  <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Blood Group</Text>
+                  <View
+                    style={{
+                      elevation: 1,
+                      marginVertical: 10,
+                      height: 40,
+                      backgroundColor: tertiary,
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                      borderWidth: 0.5,
+                      borderColor: brand,
                     }}
-                    value={values.distance}
                   >
-                    {distanceList.map((item) => {
-                      return <Picker.Item key={item.value} label={item.label} value={item.value} />;
-                    })}
-                  </Picker>
+                    <Picker
+                      selectedValue={selectedBloodGroup}
+                      style={{ height: 50, marginLeft: 7 }}
+                      onValueChange={(itemValue) => {
+                        handleChange('bloodGroup')(String(itemValue));
+                        setSelectedBloodGroup(itemValue);
+                        console.log(itemValue);
+                      }}
+                      value={values.bloodGroup}
+                    >
+                      {bloodGroupList.map((item, index) => {
+                        return <Picker.Item key={index} label={item} value={item} />;
+                      })}
+                    </Picker>
+                  </View>
+
+                  <Text style={{ top: 11, left: 9, fontSize: 14, fontFamily: 'Regular' }}>Distance</Text>
+                  <View
+                    style={{
+                      elevation: 1,
+                      marginVertical: 10,
+                      height: 40,
+                      backgroundColor: tertiary,
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                      borderWidth: 0.5,
+                      borderColor: brand,
+                    }}
+                  >
+                    <Picker
+                      selectedValue={selectedDistance}
+                      style={{ height: 50, marginLeft: 7 }}
+                      onValueChange={(itemValue) => {
+                        handleChange('distance')(String(itemValue));
+                        setSelectedDistance(itemValue);
+                        console.log(itemValue);
+                      }}
+                      value={values.distance}
+                    >
+                      {distanceList.map((item) => {
+                        return <Picker.Item key={item.value} label={item.label} value={item.value} />;
+                      })}
+                    </Picker>
+                  </View>
+
+                  <MsgBox type={messageType}>{message}</MsgBox>
+
+                  {!isSubmitting && (
+                    <StyledButton circle={true} onPress={handleSubmit}>
+                      <Ionicons name="search" color={primary} size={60} />
+                    </StyledButton>
+                  )}
+
+                  {isSubmitting && (
+                    <StyledButton circle={true} disabled={true}>
+                      <ActivityIndicator size="large" color={primary} />
+                    </StyledButton>
+                  )}
                 </View>
-
-                <MsgBox type={messageType}>{message}</MsgBox>
-
-                {!isSubmitting && (
-                  <StyledButton circle={true} onPress={handleSubmit}>
-                    <Ionicons name="search" color={primary} size={60} />
-                  </StyledButton>
-                )}
-
-                {isSubmitting && (
-                  <StyledButton circle={true} disabled={true}>
-                    <ActivityIndicator size="large" color={primary} />
-                  </StyledButton>
-                )}
               </StyledFormArea>
             )}
           </Formik>
           <Line style={{ marginVertical: 20 }} />
 
-          <StyledButton style={{ width: 300 }} onPress={() => navigation.navigate('Maps')}>
+          <StyledButton style={{ width: 320, elevation: 4 }} onPress={() => navigation.navigate('Maps')}>
             <ButtonText style={{ fontFamily: 'Regular' }}>Show nearby hospitals</ButtonText>
           </StyledButton>
         </InnerContainer>

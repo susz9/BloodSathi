@@ -13,6 +13,7 @@ import CompleteProfile from '../Screens/LoginSignup/CompleteProfile';
 import Welcome from '../Screens/App/Welcome';
 import Main from '../Screens/App/Main';
 import MyProfile from '../Screens/App/MyProfile';
+import UserVerification from '../Screens/App/UserVerification';
 
 //colors
 import { Colors } from './../Components/Styles';
@@ -66,6 +67,11 @@ const RootStack = () => {
                   options={{ headerTintColor: primary, title: '' }}
                   name="AddRequest"
                   component={AddRequest}
+                />
+                <Stack.Screen
+                  options={{ headerTintColor: primary, title: '' }}
+                  name="UserVerification"
+                  component={UserVerification}
                 />
               </>
             ) : (

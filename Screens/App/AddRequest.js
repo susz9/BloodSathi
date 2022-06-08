@@ -24,7 +24,7 @@ import {
   StyledRow,
 } from './../../Components/Styles';
 
-import { View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ScrollView, Text, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 //API client
@@ -34,24 +34,23 @@ import axios from 'axios';
 import { Colors } from './../../Components/Styles';
 const { primary, secondary, tertiary, brand, darkLight } = Colors;
 
-const AddRequest = ({ navigation, route }) => {
-  //console.log(route.params);
-  const [hidePassword, setHidePassword] = useState(true);
+import { bloodGroupList, distanceList } from '../../Components/PickerData';
 
+const AddRequest = ({ navigation, route }) => {
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState('Blood Group');
+
+  const id = route.params;
+  console.log(id);
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
-
-  const [selectedBloodGroup, setSelectedBloodGroup] = useState('Blood Group');
-  const [selectedGender, setSelectedGender] = useState('Gender');
-  const [selectedDistrict, setSelectedDistrict] = useState('District');
 
   //Form handling
   const handleRequest = (credentials, setSubmitting) => {
     handleMessage(null);
-    const url = 'http://192.168.10.71:3000/user/addRequest';
+    const url = `http://192.168.10.71:3000/addRequest/${id}`;
     console.log(credentials);
     axios
-      .post(url, credentials)
+      .put(url, credentials)
       .then((response) => {
         const result = response.data;
         const { status, message, data } = result;
@@ -60,6 +59,7 @@ const AddRequest = ({ navigation, route }) => {
           handleMessage(message, status);
         } else {
           console.log('request added');
+          alert(message);
         }
         setSubmitting(false);
       })
@@ -85,61 +85,60 @@ const AddRequest = ({ navigation, route }) => {
 
           <Formik
             initialValues={{
-              requestBy: '',
-              patientName: '',
               bloodGroup: '',
-              TMessage: '',
+              patientName: '',
+              hospital: '',
+              message: '',
+              date: '',
             }}
             onSubmit={(values, { setSubmitting }) => {
-              values = { ...values };
-              if (values.patientName == '' || values.bloodGroup == '' || values.TMessagee) {
+              values = { ...values, date: new Date() };
+              if (
+                values.patientName == '' ||
+                values.bloodGroup == '' ||
+                values.message == '' ||
+                values.hospital == ''
+              ) {
                 handleMessage('Please fill all required fields');
                 setSubmitting(false);
+                console.log(values);
               } else {
-                //handleRequest(values, setSubmitting);
+                handleRequest(values, setSubmitting);
                 console.log(values);
               }
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values, isSubmitting }) => (
               <StyledFormArea>
+                <Text style={{ top: 9, left: 9, fontSize: 13, fontFamily: 'Regular' }}>Blood Group</Text>
                 <View
                   style={{
-                    right: 0,
+                    elevation: 1,
+                    marginVertical: 10,
                     height: 40,
-                    marginBottom: 12,
                     backgroundColor: tertiary,
                     borderRadius: 8,
                     justifyContent: 'center',
+                    borderWidth: 0.5,
+                    borderColor: brand,
                   }}
                 >
                   <Picker
-                    style={{
-                      left: 8,
-                      width: 300,
-                      fontSize: 12,
-                      fontFamily: 'Light',
-                    }}
-                    textStyle={{ color: 'yellow' }}
                     selectedValue={selectedBloodGroup}
-                    onValueChange={(itemValue, itemIndex) => {
+                    style={{ height: 50, marginLeft: 7 }}
+                    onValueChange={(itemValue) => {
+                      handleChange('bloodGroup')(String(itemValue));
                       setSelectedBloodGroup(itemValue);
                       console.log(itemValue);
                     }}
-                    onBlur={handleBlur('bloodGroup')}
                     value={values.bloodGroup}
                   >
-                    <Picker.Item label="Select Blood Group" value="" />
-                    <Picker.Item label="A+" value="A+" />
-                    <Picker.Item label="A-" value="A-" />
-                    <Picker.Item label="B+" value="B+" />
-                    <Picker.Item label="B-" value="B-" />
-                    <Picker.Item label="O+" value="O+" />
-                    <Picker.Item label="O-" value="O-" />
-                    <Picker.Item label="AB+" value="AB+" />
-                    <Picker.Item label="AB-" value="AB-" />
+                    {bloodGroupList.map((item, index) => {
+                      return <Picker.Item key={index} label={item} value={item} />;
+                    })}
                   </Picker>
                 </View>
+
                 <MyTextInput
                   label="Patient name"
                   icon="person-outline"
@@ -151,37 +150,31 @@ const AddRequest = ({ navigation, route }) => {
                 />
 
                 <MyTextInput
-                  label="Address"
+                  label="Hospital Location"
                   icon="location-outline"
                   placeholder="Salakpur Bazar"
                   placeholderTextColor={darkLight}
-                  onChangeText={handleChange('address')}
-                  onBlur={handleBlur('address')}
-                  value={values.address}
+                  onChangeText={handleChange('hospital')}
+                  onBlur={handleBlur('hospital')}
+                  value={values.hospital}
                 />
 
                 <MyTextInput
                   label="Message"
                   placeholder="Your message..."
                   placeholderTextColor={darkLight}
-                  onChangeText={handleChange('TMessage')}
-                  onBlur={handleBlur('TMessage')}
-                  value={values.TMessage}
-                  multiline={true}
-                  style={{ height: 100, padding: 0 }}
+                  onChangeText={handleChange('message')}
+                  onBlur={handleBlur('message')}
+                  value={values.message}
+                  multiline
+                  message
+                  numberOfLines={4}
                 />
-
-                <MsgBox style={{ top: 8 }} type={messageType}>
+                <MsgBox style={{ marginVertical: 0 }} type={messageType}>
                   {message}
                 </MsgBox>
-
                 {!isSubmitting && (
-                  <StyledButton
-                    style={{ marginVertical: 4, width: 300 }}
-                    onPress={() => {
-                      console.log('Request sent' + ' ' + values);
-                    }}
-                  >
+                  <StyledButton style={{ marginVertical: 6 }} onPress={handleSubmit}>
                     <ButtonText>Submit</ButtonText>
                   </StyledButton>
                 )}
@@ -200,20 +193,15 @@ const AddRequest = ({ navigation, route }) => {
   );
 };
 
-const MyTextInput = ({ label, icon, isDate, showDatePicker, ...props }) => {
+const MyTextInput = ({ label, icon, ...props }) => {
   return (
-    <View style={{ width: 300 }}>
+    <View>
       <LeftIcon>
         <Ionicons name={icon} size={24} color={brand} />
       </LeftIcon>
       <StyledInputLabel>{label}</StyledInputLabel>
 
-      {!isDate && <StyledTextInput {...props} />}
-      {isDate && (
-        <TouchableOpacity onPress={showDatePicker}>
-          <StyledTextInput {...props} />
-        </TouchableOpacity>
-      )}
+      <StyledTextInput {...props} />
     </View>
   );
 };

@@ -60,7 +60,7 @@ const PasswordLess = ({ navigation }) => {
       .post(url, phone)
       .then((response) => {
         const result = response.data;
-
+        console.log(result);
         const { status, message, data } = result;
 
         if (status !== 'SUCCESS') {
@@ -70,9 +70,9 @@ const PasswordLess = ({ navigation }) => {
           //login true
           //automatically navigates to main screen using:
           const num = JSON.stringify(data);
-          //console.log(data);
-          handleMessage(num, status);
+          console.log(data);
 
+          //sending fullHash (response from server)
           navigation.navigate('OTPVerification', data);
           //console.log(JSON.stringify(data));
         }
@@ -110,13 +110,13 @@ const PasswordLess = ({ navigation }) => {
             .then((response) => {
               const { data } = response;
               const { message, status } = data;
-
+              //console.log(data.data[0]);
               if (status !== 'SUCCESS') {
                 navigation.navigate('CompleteProfile', { email, name, photoUrl });
               } else {
                 // console.log(JSON.stringify(data));
                 console.log('axios success');
-                persistLogin({ email, name, photoUrl }, 'Google signin successful', 'SUCCESS');
+                persistLogin(data.data[0], 'Google signin successful', 'SUCCESS');
               }
             })
             .catch((error) => {

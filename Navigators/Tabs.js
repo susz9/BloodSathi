@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { TouchableOpacity } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 //colors
 import { Colors } from '../Components/Styles';
@@ -28,9 +28,9 @@ const Tabs = () => {
         tabBarActiveTintColor: brand,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 30,
-          left: 40,
-          right: 40,
+          bottom: 20,
+          left: 30,
+          right: 30,
           elevation: 2,
           backgroundColor: '#ffffff',
           borderRadius: 20,

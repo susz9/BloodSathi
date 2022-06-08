@@ -50,6 +50,7 @@ import { CredentialsContext } from './../../Components/CredentialsContext';
 
 const CompleteProfile = ({ navigation, route }) => {
   console.log(route.params);
+  const phone = route.params.phone;
   const email = route.params.email;
   const password = route.params.password;
   const name = route.params.name;
@@ -231,8 +232,8 @@ const CompleteProfile = ({ navigation, route }) => {
           <Formik
             initialValues={{
               fullName: name || '',
-              phone: '',
-              email: email,
+              phone: phone || '',
+              email: email || '',
               password: password || '',
               dateOfBirth: '',
               bloodGroup: '',

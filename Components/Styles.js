@@ -10,7 +10,7 @@ export const Colors = {
   primary: '#ffffff',
   secondary: '#000000',
   tertiary: '#FCEBF0',
-  brand: '#F43A6B',
+  brand: '#E72A5C',
   darkLight: '#9ca3af',
   green: '#00db0f',
   control: '#f5f5f5',
@@ -45,7 +45,7 @@ export const WelcomeContainer = styled(InnerContainer)`
 `;
 
 export const Illustration = styled.Image`
-  margin-top: 32px;
+  margin-top: 16px;
   width: 196px;
   height: 196px;
 `;
@@ -59,7 +59,7 @@ export const PageTitle = styled.Text`
 `;
 
 export const StyledFormArea = styled.View`
-  margin-vertical: 24px;
+  margin-vertical: 12px;
   width: 100%;
 `;
 
@@ -74,6 +74,17 @@ export const StyledTextInput = styled.TextInput`
   margin-bottom: 10px;
   color: ${secondary};
   font-family: Regular;
+
+  ${(props) =>
+    props.message == true &&
+    `
+    margin-vertical: 0px;
+    margin-bottom: 10px;
+    padding-top: 0px;
+    padding-left: 16px;
+    height: 105px;
+    
+  `}
 `;
 
 export const StyledPhone = styled.TextInput`
@@ -168,7 +179,6 @@ export const StyledButton = styled.TouchableOpacity`
 
 export const StyledRow = styled.View`
   flex-direction: row;
-  justify-content: center;
 `;
 
 export const ButtonText = styled.Text`
@@ -238,12 +248,13 @@ export const Avatar = styled.Image`
 
 export const Greet = styled.Text`
   color: ${secondary};
-  font-size: 24px;
+  font-size: 20px;
   text-align: left;
+  font-family: Regular;
 `;
 
 //user card
-export const UserCardContainer = styled.TouchableOpacity`
+export const UserCardContainer = styled.View`
   flex-direction: row;
   background-color: ${primary};
   width: 360px;
@@ -252,8 +263,8 @@ export const UserCardContainer = styled.TouchableOpacity`
 `;
 
 export const UserIcon = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 50px;
   border-width: 2px;
   border-color: ${primary};
@@ -273,19 +284,22 @@ export const Verified = styled.Image`
 //request feed
 export const FeedContainer = styled.View`
   flex: 1;
+  align-items: center;
   background-color: ${control};
   width: 360px;
   border-radius: 16px;
 `;
 
 export const StyledRequest = styled.View`
+  align-items: center;
   background-color: ${primary};
-  width: 340px;
+  width: 360px;
   border-radius: 16px;
 `;
 
 export const MessageContainer = styled.View`
-  width: 340px;
+  width: 360px;
+  padding: 8px 12px 8px 12px;
 `;
 
 export const ProfileContainer = styled.View`

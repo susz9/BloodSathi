@@ -48,22 +48,22 @@ import {
 import { Poppins_400Regular } from '@expo-google-fonts/poppins';
 
 const OTPVerification = ({ navigation, route }) => {
+  const { phone, fullHash } = route.params;
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
-  //const [phone, setPhone] = useState('false');
-  const { phone } = route.params;
-  console.log(phone);
+
   //context
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   const handleLogin = (credentials, setSubmitting) => {
     handleMessage(null);
     const url = 'http://192.168.10.71:3000/verifyOTP';
-    console.log(credentials);
+    //console.log(credentials);
     axios
       .post(url, credentials)
       .then((response) => {
         const result = response.data;
+        console.log(result);
 
         const { status, message, data } = result;
 
@@ -73,8 +73,27 @@ const OTPVerification = ({ navigation, route }) => {
         } else {
           //login true
           //automatically navigates to main screen using:
-          persistLogin({ ...data[0] }, message, status);
-          //console.log(JSON.stringify(data));
+          //persistLogin({ ...data[0] }, message, status);
+          alert('user verified');
+          const url = 'http://192.168.10.71:3000/user/check';
+          axios
+            .post(url, phone)
+            .then((response) => {
+              const { data } = response;
+              const { message, status } = data;
+              //console.log(data.data[0]);
+              if (status !== 'SUCCESS') {
+                navigation.navigate('CompleteProfile', { phone });
+              } else {
+                // console.log(JSON.stringify(data));
+                console.log('axios success');
+                persistLogin(data.data[0], 'Signin successful with OTP', 'SUCCESS');
+              }
+            })
+            .catch((error) => {
+              handleMessage('An error occured while Login');
+              console.log(error);
+            });
         }
         setSubmitting(false);
       })
@@ -111,7 +130,7 @@ const OTPVerification = ({ navigation, route }) => {
           <PageTitle>OTP Verification</PageTitle>
 
           <Formik
-            initialValues={{ otp: '' }}
+            initialValues={{ phone: phone, hash: fullHash, otp: '' }}
             onSubmit={(values, { setSubmitting }) => {
               if (values.otp == '') {
                 handleMessage('Please enter the OTP Code.');
@@ -173,7 +192,9 @@ const OTPVerification = ({ navigation, route }) => {
 const MyTextInput = ({ phone, label, ...props }) => {
   return (
     <View>
-      <StyledInputLabel style={{ textAlign: 'center', marginBottom: 12 }}>{label + '\n' + phone}</StyledInputLabel>
+      <StyledInputLabel style={{ textAlign: 'center', marginBottom: 12, fontSize: 14 }}>
+        {label + '\n' + phone}
+      </StyledInputLabel>
       <StyledOTP {...props} />
     </View>
   );
